@@ -1,8 +1,8 @@
 /**
  * 计划：
  * click
- * 
- * @author Martlet
+ * @author ridersam <e1399579@gmail.com>
+ * @Modified by Martlet
  */
 auto(); // 自动打开无障碍服务
 
