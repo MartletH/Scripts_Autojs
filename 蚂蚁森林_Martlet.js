@@ -3,7 +3,16 @@
  * @author ridersam <e1399579@gmail.com>
  * @Modified by Martlet, 20181221, new version no 攻略 word.
   */
-//console.show()
+
+  // 所有操作都是竖屏
+const WIDTH = Math.min(device.width, device.height);
+const HEIGHT = Math.max(device.width, device.height);
+const IS_ROOT = files.exists("/sbin/su") || files.exists("/system/xbin/su") || files.exists("/system/bin/su");
+
+/* console.show() // debug
+console.setPosition(WIDTH/2, 0)
+console.setSize(WIDTH/2, HEIGHT/4) */
+
 auto(); // 自动打开无障碍服务
 var config = files.isFile("config.js") ? require("config.js") : {};
 if (typeof config !== "object") {
@@ -14,10 +23,7 @@ var options = Object.assign({
     pattern_size: 3
 }, config); // 用户配置合并
 
-// 所有操作都是竖屏
-const WIDTH = Math.min(device.width, device.height);
-const HEIGHT = Math.max(device.width, device.height);
-const IS_ROOT = files.exists("/sbin/su") || files.exists("/system/xbin/su") || files.exists("/system/bin/su");
+
 
 setScreenMetrics(WIDTH, HEIGHT);
 start(options);
@@ -44,13 +50,13 @@ function start(options) {
         antForest.openApp();
     });
 
-    if (files.exists("Secure.js")) {
+/*     if (files.exists("Secure.js")) {
         var Secure = require("Secure.js");
         var secure = new Secure(robot, options.max_retry_times);
         secure.openLock(options.password, options.pattern_size);
         // 拉起到前台界面
         antForest.openApp();
-    }
+    } */
 
     antForest.launch();
     antForest.work();
@@ -205,14 +211,16 @@ function AntForest(robot, options) {
 
     this.work = function () {
         sleep(1000);
-        this.robot.click(WIDTH / 2, 510);
+        this.robot.click(WIDTH / 2, 510); // First click, not sure the function
 
         var timeout = this.options.timeout;
         var startPower = this.getPower();
         log("当前能量：" + startPower);
 
         // 开始收取
+        log("Take self start")
         this.take();
+        log("Take self end")
         this.takeRemain(this.getRemainList(), this.options.min_time, this.options.max_time);
         sleep(500);
 
@@ -397,8 +405,8 @@ function AntForest(robot, options) {
         
         var filters = className("android.widget.Button").filter(function (o) {
             var desc = o.contentDescription;
-            
-            return (null !== desc.match(/^收集能量|^\s?$/));
+            return (null !== desc.match(/^收集能量/)); // only collect available power ball
+            //return (null !== desc.match(/^收集能量|^\s?$/));
         }).find();
         
        //var filters = className("android.widget.Button").depth(13).find();
@@ -416,8 +424,8 @@ function AntForest(robot, options) {
         
         var filters = className("android.widget.Button").filter(function (o) {
             var desc = o.contentDescription;
-            
-            return (null !== desc.match(/^收集能量|^\s?$/));
+            return (null !== desc.match(/^收集能量/)); // only collect available power ball
+            // return (null !== desc.match(/^收集能量|^\s?$/));
         }).find();
         
         
