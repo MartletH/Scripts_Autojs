@@ -6,6 +6,13 @@
  */
 auto(); // 自动打开无障碍服务
 
+const WIDTH = Math.min(device.width, device.height);
+const HEIGHT = Math.max(device.width, device.height);
+
+console.show() // debug
+console.setPosition(0, HEIGHT*3/4)
+console.setSize(WIDTH, HEIGHT/4)
+
 //配制操作
 var config = files.isFile("config.js") ? require("config.js") : {};
 if (typeof config !== "object") {
@@ -18,8 +25,6 @@ var options = Object.assign({
 
 
 // 所有操作都是竖屏
-const WIDTH = Math.min(device.width, device.height);
-const HEIGHT = Math.max(device.width, device.height);
 setScreenMetrics(WIDTH, HEIGHT);
 start(options);
 
@@ -95,16 +100,19 @@ function starballstart() {
     exit();
 }
 
+var x2=0;
+var y2=0;
+
 function AntManor() {
     this.colors = ["#FF4C4C", "#4E86FF", "#FFD950"]; // red, blue, gold
-    this.find_time = 5000;
+    this.find_time = 500;
 
     this.play = function () {
         var len = this.colors.length;
         var wait_time = 10;
         // var baseline = device.height * 0.412 | 0;
-        var baseline = device.height * 0.412 | 0;
-        var min_height = baseline * 0.55 | 0;
+        var baseline = device.height * 0.45 | 0;
+        var min_height = baseline * 0.5 | 0;
         // var min_height = baseline * 0.55 | 0;
         
         // 发球
@@ -112,29 +120,58 @@ function AntManor() {
         var x = point.x;
         var y = point.y;
         click(x, y);
+        x2=x;
+        y2=y;
         
-        for(i=1;i<=1000;i++){
+        for(i=1;i<=500;i++){
             var point = this.findColorPoint(len);
             var x = point.x;
-            var y  = point.y;
+            var y = point.y;
             // click(x,y);
             if (min_height <= y && y <= baseline)
-            click(x-20, baseline);
-            click(x+20, baseline);
+            {
+                dx=x-x2;
+                dy=y-y2;
+                log(dx+","+dy)
+                if(y>=y2)
+                {
+                    if(x>=x2)
+                {                    
+                    click(x-5, baseline-5);
+                    click(x+5, baseline+5);
+                }
+                else
+                {
+                    click(x+5, baseline+5);
+                    click(x-5, baseline-5);
+                }
+                }
+                var point2 = this.findColorPoint(len);
+                x2=point2.x;
+                y2=point2.y;
+            }
+            else
+            {
+                if(y>baseline)
+                {
+                    click(x2,y2);
+                }
+            }
+
             // if(i=200|500|700){toastLog(i)}
                             
         }
     };
 
     this.findColorPoint = function (len) {
-        var wait_time = 10;
+        var wait_time = 1;
         for (var time = 0;time < this.find_time;time += wait_time) {
             for (var i = 0;i < len;i++) {
                 var capture = captureScreen();
-                if (!capture) {
-                    // sleep(50);
+/*                 if (!capture) {
+                    sleep(50);
                     continue;
-                }
+                } */
                 var color = this.colors[i];
                 var point = findColorEquals(capture, color, 0, 0, WIDTH, HEIGHT);
                 if (point !== null) {
