@@ -1,70 +1,21 @@
 /**
- * 计划：
- * click
- * @author ridersam <e1399579@gmail.com>
- * @Modified by Martlet
+ * Huge modification from ridersam <e1399579@gmail.com>
+ * By Martlet
  */
 auto(); // 自动打开无障碍服务
 
-const WIDTH = Math.min(device.width, device.height);
-const HEIGHT = Math.max(device.width, device.height);
+const WIDTH = device.width
+const HEIGHT = device.height
 
-console.show() // debug
+/* console.show() // debug
 console.setPosition(0, HEIGHT*3/4)
-console.setSize(WIDTH, HEIGHT/4)
+console.setSize(WIDTH, HEIGHT/4) */
 
-//配制操作
-var config = files.isFile("config.js") ? require("config.js") : {};
-if (typeof config !== "object") {
-    config = {};
-}
-var options = Object.assign({
-    password: "",
-    pattern_size: 3
-}, config); // 用户配置合并
-
-
-// 所有操作都是竖屏
-setScreenMetrics(WIDTH, HEIGHT);
-start(options);
-
-
-/**
-* 开始运行
-* @param options
-*/
-function start(options) {
-   checkModule();
-
-   var Robot = require("Robot.js");
-   var robot = new Robot(options.max_retry_times);
-   var dH5 = new mapp(robot, options);
+   var dH5 = new mapp();
    
-   while (!device.isScreenOn()) {
-       device.wakeUp();
-       sleep(1000); // 等待屏幕亮起
-   }
-   
-
-
    dH5.launch();
    starballstart();
    dH5.play();
-
-   // 退出
-   exit();
-   throw new Error("强制退出");
-}
-
-/**
-* 检查必要模块, Robot.js
-*/
-function checkModule() {
-   if (!files.exists("Robot.js")) {
-       throw new Error("缺少Robot.js文件，请将文件放入和脚本相同文件夹");
-   }
-}
-
 
 function starballstart() {
     var timeout = 10000;
@@ -100,14 +51,14 @@ function starballstart() {
     exit();
 }
 
-var x2=0;
-var y2=0;
+var x=0,x2=0;
+var y=0,y2=0;
 
 function AntManor() {
     this.colors = ["#FF4C4C", "#4E86FF", "#FFD950"]; // red, blue, gold
     this.find_time = 500;
 
-    this.play = function () {
+    this.play = function (){
         var len = this.colors.length;
         var wait_time = 10;
         // var baseline = device.height * 0.412 | 0;
@@ -117,103 +68,83 @@ function AntManor() {
         
         // 发球
         var point = this.findColorPoint(len);
-        var x = point.x;
-        var y = point.y;
+        x = point.x;
+        y = point.y;
         click(x, y);
         x2=x;
         y2=y;
         
-        for(i=1;i<=500;i++){
+        for(i=1;i<=500;i++)
+        {
+
             var point = this.findColorPoint(len);
-            var x = point.x;
-            var y = point.y;
+            x = point.x;
+            y = point.y;
             // click(x,y);
-            if (min_height <= y && y <= baseline)
-            {
-                dx=x-x2;
-                dy=y-y2;
-                log(dx+","+dy)
-                if(y>=y2)
+                //while(y>y2)
                 {
+                if (min_height <= y && y <= baseline)
+                {
+
                     if(x>=x2)
-                {                    
-                    click(x-5, baseline-5);
-                    click(x+5, baseline+5);
+                    {                    
+                        click(x-5, baseline-5);
+                        click(x+5, baseline+5);
+                        
+                    }
+                    else
+                    {
+                        click(x+5, baseline+5);
+                        click(x-5, baseline-5);
+                    };
+
                 }
                 else
                 {
-                    click(x+5, baseline+5);
-                    click(x-5, baseline-5);
-                }
-                }
-                var point2 = this.findColorPoint(len);
-                x2=point2.x;
-                y2=point2.y;
-            }
-            else
-            {
-                if(y>baseline)
-                {
-                    click(x2,y2);
-                }
-            }
-
-            // if(i=200|500|700){toastLog(i)}
-                            
-        }
+                    if(y>baseline)
+                    {
+                        click(x,y)
+                    };
+                };
+                };
+           /*  var point2 = this.findColorPoint(len);
+            x2=point2.x;
+            y2=point2.y;
+            click(x2,y2);
+            dx=x-x2;
+            dy=y-y2;
+            log("2:"+x2+","+y2)
+            log("1:"+dx+","+dy) */
+        };
     };
 
     this.findColorPoint = function (len) {
         var wait_time = 1;
-        for (var time = 0;time < this.find_time;time += wait_time) {
-            for (var i = 0;i < len;i++) {
+        for (var time = 0;time < this.find_time;time += wait_time)
+        {
+            for (var i = 0;i < len;i++)
+            {
                 var capture = captureScreen();
-/*                 if (!capture) {
-                    sleep(50);
+                if (!capture)
+                {
+                    log("Capture Fail")
                     continue;
-                } */
+                }
                 var color = this.colors[i];
-                var point = findColorEquals(capture, color, 0, 0, WIDTH, HEIGHT);
-                if (point !== null) {
+                var point = findColorEquals(capture, color, WIDTH*0.2, HEIGHT*0.2, WIDTH*0.8, HEIGHT*0.7);
+                if (point !== null)
+                {
                     return point;
                 }
             }
         }
-
         return null;
     };
-}
+};
 
-/**
-* myapp operations
-* @param robot
-* @param options
-* @constructor
-*/
 
-function mapp(robot, options) {
-   this.robot = robot;
-   options = options || {};
-   var settings = {
-       timeout: 8000, // 超时时间：毫秒
-       max_retry_times: 10, // 最大失败重试次数
-       takeImg: "take.png", // 收取好友能量用到的图片
-       max_swipe_times: 100, // 好友列表最多滑动次数
-       min_time: "7:14:00", // 检测时段
-       max_time: "7:15:50",
-       check_within_time: 5,
-       help_img: ""
-   };
-   this.options = Object.assign(settings, options);
-   this.package = "com.eg.android.AlipayGphone"; // 支付宝包名
-   this.state = {};
-   this.capture = null;
-   this.bounds = [0, 0, WIDTH, 1100];
-   this.icon_num = 1;
-   this.start_time = (new Date()).getTime();
-   this.detected = 0;
-   
-   toastLog("马上弄，按音量上键停止");
+function mapp() {
+
 
    this.openApp = function () {
        launch(this.package);
@@ -260,7 +191,7 @@ function mapp(robot, options) {
 
    this.waitForLoading = function (keyword) {
        toastLog("waitForLoading")
-       var timeout = this.options.timeout;
+       var timeout = 8000;
        var waitTime = 2000;
        sleep(2000);
        timeout -= 2000;
