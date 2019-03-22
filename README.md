@@ -1,4 +1,9 @@
 # Scripts_Autojs
+~~~
+Make it easier for you to help more.
+Follow the initiative from Alipay, donation, Ant Forest, Ant Farm.
+Automation with AutoJS.
+~~~
 * Collection of Auto.js scripts
     1. Modified from Original sources
 
