@@ -11,13 +11,13 @@ const HEIGHT = device.height
 console.setPosition(0, HEIGHT*3/4)
 console.setSize(WIDTH, HEIGHT/4) */
 
-   var dH5 = new mapp();
-   
-   dH5.launch();
-   starballstart();
-   dH5.play();
+var dH5 = new mapp()
+dH5.launch()
+launch_starball()
+var star = new play_starball();
+star.play();
 
-function starballstart() {
+function launch_starball() {
     var timeout = 10000;
     // 截图权限申请
     threads.start(function () {
@@ -38,26 +38,45 @@ function starballstart() {
     toast("打开星星球界面");
     app.startActivity({
         action: "VIEW",
-        data: "alipays://platformapi/startapp?appId=66666782"
+        data: "alipays://platformapi/startapp?appId=66666782" //Star Ball URL scheme
     });
     waitForActivity("com.alipay.mobile.nebulacore.ui.H5Activity");
     toast("进入星星球成功");
     sleep(5000);
 
-    var antManor = new AntManor();
-
-    antManor.play();
-
-    exit();
+   
 }
 
-var x=0,x2=0;
-var y=0,y2=0;
-
-function AntManor() {
+function play_starball() {
+    //Define find color function, with area image search
     this.colors = ["#FF4C4C", "#4E86FF", "#FFD950"]; // red, blue, gold
     this.find_time = 500;
-
+    this.findColorPoint = function (len) {
+        var wait_time = 1;
+        for (var time = 0;time < this.find_time;time += wait_time)
+        {
+            for (var i = 0;i < len;i++)
+            {
+                var capture = captureScreen();
+                if (!capture)
+                {
+                    log("Capture Fail")
+                    continue;
+                }
+                var color = this.colors[i];
+                var point = findColorEquals(capture, color, WIDTH*0.2, HEIGHT*0.2, WIDTH*0.8, HEIGHT*0.7);
+                if (point !== null)
+                {
+                    return point;
+                }
+            }
+        }
+        return null;
+    };
+    
+    //Play the ball, with capability to debug and trace the ball speed.
+    var x=0,x2=0
+    var y=0,y2=0
     this.play = function (){
         var len = this.colors.length;
         var wait_time = 10;
@@ -76,7 +95,6 @@ function AntManor() {
         
         for(i=1;i<=500;i++)
         {
-
             var point = this.findColorPoint(len);
             x = point.x;
             y = point.y;
@@ -117,43 +135,9 @@ function AntManor() {
             log("1:"+dx+","+dy) */
         };
     };
-
-    this.findColorPoint = function (len) {
-        var wait_time = 1;
-        for (var time = 0;time < this.find_time;time += wait_time)
-        {
-            for (var i = 0;i < len;i++)
-            {
-                var capture = captureScreen();
-                if (!capture)
-                {
-                    log("Capture Fail")
-                    continue;
-                }
-                var color = this.colors[i];
-                var point = findColorEquals(capture, color, WIDTH*0.2, HEIGHT*0.2, WIDTH*0.8, HEIGHT*0.7);
-                if (point !== null)
-                {
-                    return point;
-                }
-            }
-        }
-        return null;
-    };
-};
-
+}
 
 function mapp() {
-
-
-   this.openApp = function () {
-       launch(this.package);
-   };
-
-   this.closeApp = function () {
-       this.robot.kill(this.package);
-   };
-
    // v lauch doLaunch waitForLoading for this.launch
    this.launch = function () {
        var times = 0;
@@ -173,7 +157,6 @@ function mapp() {
 
        throw new Error("运行失败");
    };
-
    this.doLaunch = function () {
        toastLog("打开url scheme");
 
@@ -188,7 +171,6 @@ function mapp() {
 
        return true;
    };
-
    this.waitForLoading = function (keyword) {
        toastLog("waitForLoading")
        var timeout = 8000;
@@ -211,5 +193,10 @@ function mapp() {
        return false;
    };
    // ^ lauch doLaunch waitForLoading for this.launch
-   
+      this.openApp = function () {
+       launch(this.package);
+   };
+   this.closeApp = function () {
+       this.robot.kill(this.package);
+   };
 }
