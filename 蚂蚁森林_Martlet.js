@@ -424,8 +424,8 @@ function AntForest(robot, options) {
         
         var filters = className("android.widget.Button").filter(function (o) {
             var desc = o.contentDescription;
-            return (null !== desc.match(/^收集能量/)); // only collect available power ball
-            // return (null !== desc.match(/^收集能量|^\s?$/));
+            //return (null !== desc.match(/^收集能量/)); // only collect available power ball
+             return (null !== desc.match(/^收集能量|^\s?$/));
         }).find();
         
         

@@ -64,7 +64,7 @@ function play_starball() {
                     continue;
                 }
                 var color = this.colors[i];
-                var point = findColorEquals(capture, color, WIDTH*0.2, HEIGHT*0.2, WIDTH*0.8, HEIGHT*0.7);
+                var point = findColorEquals(capture, color, WIDTH*0.3, HEIGHT*0.2, WIDTH*0.7, HEIGHT*0.7);
                 if (point !== null)
                 {
                     return point;
