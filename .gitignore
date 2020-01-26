@@ -4,3 +4,6 @@ archive/蚂蚁森林desc_Martlet.js
 test.js
 test2.js
 
+*.png
+archive/config.js
+archive/Robot.js
