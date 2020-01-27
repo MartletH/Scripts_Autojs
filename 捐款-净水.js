@@ -37,7 +37,7 @@ sleep(500) // Wait for ammount enter
 text("匿名捐助").findOnce().click()
 // Enter amount
 amount = className("android.widget.EditText").findOnce() //无自定义金额dsc/txt，只好找classname
-amount.setText("0.01")//选中自定义金额
+amount.setText("1")//选中自定义金额
 
 amount.click() // amount click to select 自定义金额
 click(0.25 * WIDTH, 0.9 * HEIGHT); // first click to cancel amount enter

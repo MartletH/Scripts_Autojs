@@ -7,12 +7,8 @@ auto(); // 自动打开无障碍服务
 const WIDTH = device.width
 const HEIGHT = device.height
 
-/* console.show() // debug
-console.setPosition(0, HEIGHT*3/4)
-console.setSize(WIDTH, HEIGHT/4) */
+// console.show() // debug
 
-var dH5 = new mapp()
-dH5.launch()
 launch_starball()
 var star = new play_starball();
 star.play();
@@ -135,68 +131,4 @@ function play_starball() {
             log("1:"+dx+","+dy) */
         };
     };
-}
-
-function mapp() {
-   // v lauch doLaunch waitForLoading for this.launch
-   this.launch = function () {
-       var times = 0;
-       toastLog("Launch start");
-       do {
-           if (this.doLaunch()) {
-               toastLog("doLaunch complete");
-               return;
-           } else {
-               times++;
-               this.back();
-               sleep(1500);
-               this.openApp();
-           }
-       //} while(1)
-       } while (times < this.options.max_retry_times);
-
-       throw new Error("运行失败");
-   };
-   this.doLaunch = function () {
-       toastLog("打开url scheme");
-
-
-       // 等待加载
-       if (this.waitForLoading("更多")) {
-           log("进入url成功");
-       } else {
-           toastLog("进入url失败");
-           return false;
-       }
-
-       return true;
-   };
-   this.waitForLoading = function (keyword) {
-       toastLog("waitForLoading")
-       var timeout = 8000;
-       var waitTime = 2000;
-       sleep(2000);
-       timeout -= 2000;
-       for (var i = 0; i < timeout; i += waitTime) {
-           if (desc(keyword).exists()) {
-               sleep(1000);
-               return true;
-           }
-           toastLog("start url")
-           app.startActivity({
-               action: "VIEW",
-               data: "alipays://platformapi/startapp?appId=66666674"
-           });
-           sleep(waitTime); // 加载中
-       }
-
-       return false;
-   };
-   // ^ lauch doLaunch waitForLoading for this.launch
-      this.openApp = function () {
-       launch(this.package);
-   };
-   this.closeApp = function () {
-       this.robot.kill(this.package);
-   };
 }
